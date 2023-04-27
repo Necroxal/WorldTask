@@ -4,8 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
 const cors = require('cors');
-
-//const router = require('./routes/routes.js');
+const router = require('./routes/routes');
 
 //Connect to db
 db(process.env.URL);
@@ -20,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-//router(app);
+router(app);
 //listen
 app.listen(PORT,  ()=>{
     console.log(`The server is listen on port: ${PORT}`);
