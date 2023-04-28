@@ -14,17 +14,17 @@ const createUser =  (req, res) => {
       password: req.body.password,
       email: req.body.email,
       position: req.body.position,
-      image: req.file. originalname
+      image: req.file.originalname
     });
 
     console.log(req.file);
 
     user.save(user)
     .then(data=>{
-      repsonse.succes(req,res,data,201);
+      response.succes(req,res,data,201);
     })
     .catch(err => {
-      repsonse.error(req,res,'Internal error',500, err)
+      response.error(req,res,'Internal error',500, err)
     });
    
 
