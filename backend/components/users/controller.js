@@ -7,7 +7,7 @@ const createUser =  (req, res) => {
       response.error(req, res, 'missing data', 440, 'fill remaining data');
       return;
     }
-    const user = new User({
+const user = new User({
       name: req.body.name,
       surname: req.body.surname,
       nickname: req.body.nickname,
@@ -17,17 +17,33 @@ const createUser =  (req, res) => {
       image: req.file.originalname
     });
 
-    console.log(req.file);
+    
+    User.find({$or:[
+      {email: user.email.toLocaleLowerCase()},
+      {nickname: user.nickname.toLocaleLowerCase()}
+    ]}).then((data)=>{
 
-    user.save(user)
-    .then(data=>{
-      response.succes(req,res,data,201);
+      if(data && data.length >= 1){
+        response.succes(req,res,'user exist',201);
+      }
+      else{
+         //console.log(req.file);
+         user.save(user)
+         .then(data=>{
+           response.succes(req,res,data,201);
+         })
+         .catch(err => {
+           response.error(req,res,'Internal error',500, err)
+         });
+      }
+      
+    }).catch((error)=>{
+      
+      if(error){
+        return  response.error(req, res, 'Internal Error', 500, error);
+      }
     })
-    .catch(err => {
-      response.error(req,res,'Internal error',500, err)
-    });
    
-
   }
   
   
