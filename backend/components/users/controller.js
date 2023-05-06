@@ -1,7 +1,7 @@
 const User = require('./model');
 const response = require('../../utils/response');
 
-
+//bycript
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -14,7 +14,6 @@ const createUser = async (req, res) => {
   }
 
   const passEnc = req.body.password;
-
   const passCrypt = await bcrypt.hash(passEnc, saltRounds);
 
 
@@ -41,7 +40,7 @@ const createUser = async (req, res) => {
       response.succes(req, res, 'user exist', 201);
     }
     else {
-        user.save(user)
+      user.save(user)
         .then(data => {
           response.succes(req, res, data, 201);
         })
@@ -59,9 +58,43 @@ const createUser = async (req, res) => {
 
 }
 
+const userLogin = async (req, res) => {
+  //get params
+  if (!req.body.email || !req.body.password) {
+    response.error(req, res, '', 400, 'missing email or password');
+    return
+  }
 
+  //search databse if exist}
+  User.findOne({ email: req.body.email })
+    .then(data => {
+      const pwd = bcrypt.compareSync(req.body.password, data.password);
+      if (!pwd) {
+        return response.error(req, res, 'Password incorrect', 400, 'Password incorrect');
+      }
+      const token = false;
+
+      return res.status(200).send({
+        status: 'Success',
+        message: 'login successful',
+        user: {
+          id: data._id,
+          name: data.name,
+          nickname: data.nickname,
+        },
+        token
+      });
+
+    }).catch(err => {
+      if (err || !data) {
+        return response.error(req, res, 'Wrong email', 400, err);
+      }
+    })
+
+}
 
 module.exports = {
   createUser,
+  userLogin
 
 }
