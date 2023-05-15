@@ -1,6 +1,6 @@
 const User = require('./model');
 const response = require('../../utils/response');
-
+const jwt = require('../../utils/jwt');
 //bycript
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -72,7 +72,7 @@ const userLogin = async (req, res) => {
       if (!pwd) {
         return response.error(req, res, 'Password incorrect', 400, 'Password incorrect');
       }
-      const token = false;
+      const token = jwt.createToken(data);
 
       return res.status(200).send({
         status: 'Success',
@@ -92,9 +92,14 @@ const userLogin = async (req, res) => {
     })
 
 }
-
+const testUser = async(req,res)=>{
+  return res.status(200).send({
+    message: "The route test",
+    user: req.user
+  });
+}
 module.exports = {
   createUser,
-  userLogin
-
+  userLogin,
+  testUser
 }
